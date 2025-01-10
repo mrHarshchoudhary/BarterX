@@ -1,110 +1,36 @@
-import http from "http";
-import fs from "fs"
+const server = Bun.serve({
+    port: 8050,
+    fetch(req) {
+        const url = new URL(req.url);
+        switch (url.pathname) {
+            case "/": return new Response("Welcome to BarterX");
+            case "/products": return new Response("Here are the products up for sale in BarterX");
+            case "/login": return new Response("Login to the BarterX");
+            case "/signup": return new Response("Sign up to the BarterX");
+            case "/profile": return new Response("Trader Profile");
+            case "/cart": return new Response("Your Shopping Cart is here");
+            case "/checkout": return new Response("Let's start Shipping");
+            case "/orders": return new Response("Your Orders are here");
+            case "/api/products":
+                const apiData = [
+                    { "id": 1, "name": "Used Laptop", "price": 300 },
+                    { "id": 2, "name": "Second-hand Bicycle", "price": 50 }
+                ];
+                return new Response(JSON.stringify(apiData));
+            case "/categories": return new Response("Browse Categories");
+            case "/chat": return new Response("Your Chat with fellow Traders");
+            case "/contact": return new Response("Contact Us at");
+            case "/about": return new Response(Bun.file("./about.html"));               
+            default:
+                return Response.json(
+                    { error: "Page not found", statusCode: 404 },
+                    {
+                        "status": 404,
+                        headers: { "Content-Type": "application/json" }
+                    }
+                );
+        }
+    },
+});
 
-const server = http.createServer((req,res)=>{
-    const log = `${new Date()}: GET ${req.url}\n`;
-    fs.appendFileSync("log.txt",log)
-    if(req.method === 'GET'){
-    switch(req.url){
-
-        
-        case "/":
-            let index = "Welcome to BarterX"
-            res.write(index)
-            res.end()
-            break;
-
-        case "/products":
-            let products = "Here are the products up for sale in BarterX";
-            res.write(products)
-            res.end();
-            break;
-        
-        case "/login":
-            let login = "Login to the BarterX";
-            res.write(login);
-            res.end();
-            break;
-
-        case "/signup":
-            let signup = "Sign up to the BarterX";
-            res.write(signup);
-            res.end();
-            break;
-
-        case "/profile":
-            let profile = "Trader Profile";
-            res.write(profile);
-            res.end();
-            break;
-        
-        case "/cart":
-            let cart = "Your Shopping Cart is here";
-            res.write(cart);
-            res.end();
-            break;
-
-        case "/checkout":
-            let checkout = "Let's start Shipping";
-            res.write(checkout);
-            res.end();
-            break;
-
-        case "/orders":
-            let orders = "Your Orders are here";
-            res.write(orders);
-            res.end();
-            break;
-
-        case "/api/products":
-            let api = [
-                { "id": 1, "name": "Used Laptop", "price": 300 },
-                { "id": 2, "name": "Second-hand Bicycle", "price": 50 }
-            ]
-            res.write(JSON.stringify(api));
-            res.end();
-            break;
-        
-        case "/categories":
-            let categories = "Browse Categories";
-            res.write(categories);
-            res.end();
-            break;
-
-        case "/chat":
-            let chat = "Your Chat with fellow Traders";
-            res.write(chat);
-            res.end();
-            break;
-
-        case "/contact":
-            let contact = "Contact Us at";
-            res.write(contact);
-            res.end();
-            break;
-
-        case "/about":
-            let about = fs.readFileSync("about.html","utf-8");
-            res.writeHead(200, { 'Content-Type': 'text/html' }); 
-            res.end(about);
-            break;
-
-        default:
-            let error = {
-                "eror" : "Page not found",
-                "statusCode":404
-            };
-            // res.json(error)
-            res.write(JSON.stringify(error))
-            res.end();
-            break;
-    }
-}
-})
-
-let port =8050;
-server.listen(port,()=>{
-    console.log(`Server intiated on port ${port}`);
-})
-
-
+console.log(`Server listening on http://localhost:${server.port}`);
