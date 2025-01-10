@@ -5,5 +5,3 @@ log.txt
 node_modules/
 
 # Ignore package-lock.json (if needed)
-package-lock.json
-package.json
